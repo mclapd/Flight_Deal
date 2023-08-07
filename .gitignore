@@ -4,3 +4,6 @@
 .idea/modules.xml
 .idea/vcs.xml
 .idea/inspectionProfiles/profiles_settings.xml
+__pycache__/data_manager.cpython-311.pyc
+__pycache__/flight_data.cpython-311.pyc
+__pycache__/flight_search.cpython-311.pyc

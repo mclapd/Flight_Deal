@@ -1,16 +1,33 @@
-# This is a sample Python script.
+from data_manager import DataManager
+from flight_search import FlightSearch
+from datetime import datetime, timedelta
+from notification_manager import NotificationManager
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+ORIGIN_CITY_IATA = "SYD"
+
+data = DataManager()
+sheet_data = data.get_destination_data()
+notification_manager = NotificationManager()
+flight_search = FlightSearch()
+
+is_empty_iata_code = False
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+for city in sheet_data:
+    if city["iataCode"] == "":
+        is_empty_iata_code = True
+        city["iataCode"] = flight_search.get_destination_code(city["city"])
 
+if is_empty_iata_code:
+    data.update_destination_codes()
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+tomorrow = datetime.now() + timedelta(days=1)
+six_month_from_today = datetime.now() + timedelta(days=(6 * 30))
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+for destination in sheet_data:
+    flight = flight_search.check_flights(
+        ORIGIN_CITY_IATA,
+        destination["iataCode"],
+        from_time=tomorrow,
+        to_time=six_month_from_today
+    )
